@@ -47,9 +47,9 @@ function Layout() {
   return (
     <div className="flex flex-col w-full h-screen bg-[#F5F5F6]">
       {/* Mobile Menu Toggle */}
-      <div className="md:hidden flex items-center justify-between px-5 py-3 bg-white ">
+      <div className="md:hidden flex items-center justify-between px-5 py-3 bg-white">
         <div className="navLogo flex items-center justify-center">
-          <img src={libraryLogo} alt="Library Logo" className="w-[50px] mr-4 shadow-2xl" />
+          <img src={libraryLogo} alt="Library Logo" className="w-[50px] mr-4" />
           <h1 className="text-xl font-semibold">Library</h1>
         </div>
         <div className="ButtonContainer flex gap-4 items-center justify-center">
@@ -161,7 +161,8 @@ function Layout() {
                   getHeading(label);
                 }}
                 key={to}
-                to={isLoggedIn === true ? to : "/"}
+                //to={isLoggedIn === true ? to : "/"}
+                to={to}
                 className={`flex items-center gap-3 w-full p-3 pl-6 rounded-[20px] transition-all duration-300 text-black ${getNavLinkClassForSidebar(
                   to
                 )}`}
