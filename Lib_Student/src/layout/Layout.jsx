@@ -10,6 +10,7 @@ import Profile from "../components/Profile";
 import { useAuth } from "../store/auth";
 import LogoutButton from "../components/LogoutButton";
 import { FaUserCircle } from "react-icons/fa";
+import { PiBooksFill } from "react-icons/pi";
 
 function Layout() {
   const location = useLocation();
@@ -86,7 +87,7 @@ function Layout() {
             {[
               {
                 to: "/books",
-                icon: <FaSwatchbook className="w-5 h-5"  />,
+                icon: <PiBooksFill className="w-5 h-5"  />,
                 label: "Books",
               },
               {
@@ -146,7 +147,7 @@ function Layout() {
             {[
               {
                 to: "/books",
-                icon: <FaSwatchbook className="w-5 h-5"/>,
+                icon: <PiBooksFill className="w-5 h-5"/>,
                 label: "Books",
               },
               {
