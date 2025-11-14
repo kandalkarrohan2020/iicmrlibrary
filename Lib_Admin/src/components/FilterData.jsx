@@ -3,11 +3,11 @@ import { HiMiniFunnel } from "react-icons/hi2";
 
 const filterOptions = [
   { label: "Received", color: "text-[#0BB501] bg-green-100" },
-  { label: "Visit Scheduled", color: "text-[#0068FF] bg-blue-100" },
-  { label: "Token", color: "text-[#FFCA00] bg-yellow-100" },
+  { label: "Given", color: "text-[#0068FF] bg-blue-100" },
+  { label: "", color: "text-[#FFCA00] bg-yellow-100" },
   { label: "Ongoing", color: "text-[#5D00FF] bg-purple-100" },
   { label: "Cancelled", color: "text-[#FF4646] bg-red-100 " },
-  { label: "Visit Rescheduled", color: "text-[#7E7E7E] bg-[#E8E9EA]" },
+  { label: "", color: "text-[#7E7E7E] bg-[#E8E9EA]" },
 ];
 
 const FilterData = () => {

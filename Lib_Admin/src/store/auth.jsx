@@ -18,26 +18,23 @@ export const AuthProvider = ({ children }) => {
   };
 
   const URI = "http://localhost:3000";
-  //const URI = "https://api.reparv.in";
 
   const [loading, setLoading] = useState(false);
-  const [dashboardFilter, setDashboardFilter] = useState("Booked");
-  const [showPropertyForm, setShowPropertyForm] = useState(false);
+  const [dashboardFilter, setDashboardFilter] = useState("");
   const [showProfile, setShowProfile] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [action, setAction] = useState("Save Details");
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
-  const [showAdditionalInfoForm, setShowAdditionalInfoForm] = useState(false);
-  const [showPropertyInfo, setShowPropertyInfo] = useState(false);
-  const [showUpdateImagesForm, setShowUpdateImagesForm] = useState(false);
-  const [showVideoUploadForm, setShowVideoUploadForm] = useState(false);
-  const [showPropertyLocationForm, setShowPropertyLocationForm] =
-    useState(false);
+  const [showBookForm, setShowBookForm] = useState(false);
+  const [showReader, setShowReader] = useState(false);
+  const [showReaderForm, setShowReaderForm] = useState(false);
 
   return (
     <AuthContext.Provider
       value={{
         URI,
+        user,
+        setUser,
         loading,
         setLoading,
         isLoggedIn,
@@ -53,20 +50,12 @@ export const AuthProvider = ({ children }) => {
         setIsActive,
         action,
         setAction,
-        showPropertyForm,
-        setShowPropertyForm,
-        user,
-        setUser,
-        showAdditionalInfoForm,
-        setShowAdditionalInfoForm,
-        showPropertyInfo,
-        setShowPropertyInfo,
-        showUpdateImagesForm,
-        setShowUpdateImagesForm,
-        showVideoUploadForm,
-        setShowVideoUploadForm,
-        showPropertyLocationForm,
-        setShowPropertyLocationForm,
+        showBookForm,
+        setShowBookForm,
+        showReader,
+        setShowReader,
+        showReaderForm,
+        setShowReaderForm,
       }}
     >
       {children}

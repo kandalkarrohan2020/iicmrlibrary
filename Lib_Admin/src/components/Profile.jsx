@@ -1,12 +1,9 @@
 import { FaArrowLeft } from "react-icons/fa6";
 import { useAuth } from "../store/auth";
-import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
 import Loader from "./Loader";
 import { IoMdClose } from "react-icons/io";
 import { FaEdit } from "react-icons/fa";
-import { IoCheckmarkDoneCircleSharp } from "react-icons/io5";
-import { Link } from "react-router-dom";
 
 const Profile = () => {
   const { showProfile, setShowProfile, setLoading, URI } = useAuth();
@@ -48,7 +45,7 @@ const Profile = () => {
   // fetch data
   const fetchProfile = async () => {
     try {
-      const response = await fetch(`${URI}/guest-user/profile`, {
+      const response = await fetch(`${URI}/admin/profile`, {
         method: "GET",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -75,7 +72,7 @@ const Profile = () => {
 
     try {
       setLoading(true);
-      const response = await fetch(`${URI}/guest-user/profile/edit`, {
+      const response = await fetch(`${URI}/admin/profile/edit`, {
         method: "PUT",
         credentials: "include",
         body: formData,
@@ -115,7 +112,7 @@ const Profile = () => {
     try {
       setLoading(true); // Show loading state before the request
 
-      const response = await fetch(`${URI}/guest-user/profile/changepassword`, {
+      const response = await fetch(`${URI}/admin/profile/changepassword`, {
         method: "PUT",
         credentials: "include",
         headers: {
@@ -183,20 +180,6 @@ const Profile = () => {
             {user?.role}
           </h3>
         </div>
-
-        <Link
-          to={`/kyc/${user?.id}`}
-          className="userOtherDetails cursor-pointer text-[#076300] active:scale-95 w-[320px] h-[40px] bg-[#FFFFFF] hover:bg-[#00760c] hover:text-[#FFFFFF] flex flex-col items-center justify-center p-5 gap-3 rounded-[20px] shadow-[#0000001A] "
-        >
-          <h2 className="text-[16px] leading-5 font-semibold flex gap-2 items-center justify-center">
-            <span>KYC Details</span>{" "}
-            <IoCheckmarkDoneCircleSharp
-              className={`${
-                user?.status === "Active" ? "block" : "hidden"
-              } w-5 h-5`}
-            />
-          </h2>
-        </Link>
 
         {/* Upload Profile Image */}
         <div className={` ${showEditProfile ? "flex" : "hidden"}  w-[320px] `}>

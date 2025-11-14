@@ -9,7 +9,7 @@ function LogoutButton() {
   const userLogout = async () => {
     try {
       await axios.post(
-        URI+"/guest-user/logout",
+        URI+"/admin/logout",
         {},
         { withCredentials: true }
       );
