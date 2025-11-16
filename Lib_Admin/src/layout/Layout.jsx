@@ -148,7 +148,8 @@ function Layout() {
                   getHeading(label);
                 }}
                 key={to}
-                to={isLoggedIn === true ? to : "/"}
+                //to={isLoggedIn === true ? to : "/"}
+                to={to}
                 className={`flex items-center gap-3 w-full p-3 rounded-[20px] transition-all duration-300 text-black ${getNavLinkClass(
                   to
                 )}`}
