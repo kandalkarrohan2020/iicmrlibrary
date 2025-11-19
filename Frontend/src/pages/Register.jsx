@@ -77,7 +77,7 @@ function Register() {
     try {
       setLoading(true);
       const response = await axios.post(
-        `${URI}/user/register`,
+        `${URI}/admin/register`,
         { role, fullname, contact, email },
         {
           headers: { "Content-Type": "application/json" },

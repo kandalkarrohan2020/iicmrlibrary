@@ -19,7 +19,7 @@ function Layout() {
   const [heading, setHeading] = useState(localStorage.getItem("head"));
   const {
     showProfile,
-    URI,
+    URI, user,
     setShowProfile,
     showRole,
     setShowRole,
@@ -58,6 +58,20 @@ function Layout() {
     setHeading(label);
     localStorage.setItem("head", label);
   };
+
+  const menus = [
+    { to: "/items", icon: <PiBooksFill size={20} />, label: "Items" },
+    {
+      to: "/readers",
+      icon: <FaBookReader size={18} />,
+      label: "Readers",
+    },
+    {
+      to: "/roles",
+      icon: <FaBookReader size={18} />,
+      label: "Roles",
+    },
+  ];
 
   return (
     <div className="flex flex-col w-full h-screen bg-[#F5F5F6]">
@@ -146,48 +160,54 @@ function Layout() {
               <h1 className="text-xl font-semibold">Library</h1>
             </div>
             {/* Navigation Links */}
-            {[
-              {
-                to: "/dashboard",
-                icon: <MdSpaceDashboard size={20} />,
-                label: "Dashboard",
-              },
-              { to: "/items", icon: <PiBooksFill size={20} />, label: "Items" },
-              {
-                to: "/readers",
-                icon: <FaBookReader size={18} />,
-                label: "Readers",
-              },
-              {
-                to: "/roles",
-                icon: <FaBookReader size={18} />,
-                label: "Roles",
-              },
-            ].map(({ to, icon, label }) => (
-              <NavLink
-                onClick={() => {
-                  setIsSidebarOpen(false);
-                  getHeading(label);
-                }}
-                key={to}
-                //to={isLoggedIn === true ? to : "/"}
-                to={to}
-                className={`flex items-center gap-3 w-full p-3 rounded-[20px] transition-all duration-300 text-black ${getNavLinkClass(
-                  to
-                )}`}
+            <NavLink
+              onClick={() => {
+                setIsSidebarOpen(false);
+                getHeading("Dashboard");
+              }}
+              key={"/dashboard"}
+              to={isLoggedIn === true ? "/dashboard" : "/"}
+              className={`flex items-center gap-3 w-full p-3 rounded-[20px] transition-all duration-300 text-black ${getNavLinkClass(
+                "/dashboard"
+              )}`}
+            >
+              <div className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-[12px] bg-white">
+                <MdSpaceDashboard size={20} />
+              </div>
+              <span
+                className={`text-sm md:text-base ${
+                  isShortBar ? "md:hidden" : "block"
+                }`}
               >
-                <div className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-[12px] bg-white">
-                  {icon}
-                </div>
-                <span
-                  className={`text-sm md:text-base ${
-                    isShortBar ? "md:hidden" : "block"
-                  }`}
+                {"Dashboard"}
+              </span>
+            </NavLink>
+            {menus
+              .filter((menu) => user?.assignMenus?.includes(menu.label))
+              .map(({ to, icon, label }) => (
+                <NavLink
+                  onClick={() => {
+                    setIsSidebarOpen(false);
+                    getHeading(label);
+                  }}
+                  key={to}
+                  to={isLoggedIn === true ? to : "/"}
+                  className={`flex items-center gap-3 w-full p-3 rounded-[20px] transition-all duration-300 text-black ${getNavLinkClass(
+                    to
+                  )}`}
                 >
-                  {label}
-                </span>
-              </NavLink>
-            ))}
+                  <div className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-[12px] bg-white">
+                    {icon}
+                  </div>
+                  <span
+                    className={`text-sm md:text-base ${
+                      isShortBar ? "md:hidden" : "block"
+                    }`}
+                  >
+                    {label}
+                  </span>
+                </NavLink>
+              ))}
           </div>
         </div>
 
