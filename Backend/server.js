@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import path from "path";
 import "dotenv/config";
+import db from "./config/dbconnect.js";
 
 import userRoutes from "./routes/admin/userRoutes.js";
 import profileRoutes from "./routes/admin/profileRoutes.js";
@@ -17,7 +18,7 @@ import cityRoutes from "./routes/admin/cityRoutes.js";
 import accountCancellation from "./routes/accountCancellationRoutes.js";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 // Configure Session
 app.use(
@@ -127,6 +128,16 @@ app.use("/admin/dashboard", dashboardRoutes);
 app.use("/admin/roles", roleRoutes);
 app.use("/admin/states", stateRoutes);
 app.use("/admin/cities", cityRoutes);
+
+// Test Database Connection on Startup
+db.getConnection((err, connection) => {
+  if (err) {
+    console.error("Database Connection Failed:", err);
+  } else {
+    console.log("Database Connected Successfully!");
+    connection.release();
+  }
+});
 
 //  Start Server
 app.listen(PORT, () => {
