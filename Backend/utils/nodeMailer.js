@@ -4,13 +4,18 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: 587,
-  secure: false,
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+});
+
+transporter.verify((error, success) => {
+  if (error) console.log("SMTP Error:", error);
+  else console.log("Gmail SMTP Connected");
 });
 
 const sendEmail = async (email, username, password, role, url) => {
