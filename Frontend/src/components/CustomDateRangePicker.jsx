@@ -3,7 +3,7 @@ import { DateRange } from "react-date-range";
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth } from "date-fns";
 import "react-date-range/dist/styles.css"; // Main styles
 import "react-date-range/dist/theme/default.css"; // Default theme
-import calender from "../assets/overview/calender.svg";
+import calender from "../assets/layout/calender.svg";
 
 const shortcutsItems = [
   { label: "Today", getValue: () => [new Date(), new Date()] },

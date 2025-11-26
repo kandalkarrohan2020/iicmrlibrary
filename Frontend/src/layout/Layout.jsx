@@ -25,6 +25,8 @@ function Layout() {
     setShowRole,
     showRoleForm,
     setShowRoleForm,
+    showAssignTaskForm,
+    setShowAssignTaskForm,
     showItem,
     setShowItem,
     showItemForm,
@@ -33,8 +35,10 @@ function Layout() {
     setShowReader,
     showReaderForm,
     setShowReaderForm,
-    showAssignTaskForm,
-    setShowAssignTaskForm,
+    giveAccess,
+    setGiveAccess,
+    showFinePaymentForm,
+    setShowFinePaymentForm,
     isLoggedIn,
   } = useAuth();
 
@@ -46,6 +50,8 @@ function Layout() {
     { state: showReader, setter: setShowReader },
     { state: showReaderForm, setter: setShowReaderForm },
     { state: showAssignTaskForm, setter: setShowAssignTaskForm },
+    { state: giveAccess, setter: setGiveAccess },
+    { state: showFinePaymentForm, setter: setShowFinePaymentForm },
   ];
 
   const getNavLinkClass = (path) => {

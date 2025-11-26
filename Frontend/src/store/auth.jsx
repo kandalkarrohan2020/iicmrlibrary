@@ -17,9 +17,11 @@ export const AuthProvider = ({ children }) => {
     Cookies.remove("accessToken");
   };
 
-  //const URI = "http://localhost:8080";
-  const URI = "https://api-iicmrlibrary.onrender.com"
+  const URI = "http://localhost:8080";
+  //const URI = "https://api-iicmrlibrary.onrender.com"
+
   const [loading, setLoading] = useState(false);
+  const [giveAccess, setGiveAccess] = useState(false);
   const [dashboardFilter, setDashboardFilter] = useState("");
   const [showProfile, setShowProfile] = useState(false);
   const [isActive, setIsActive] = useState(false);
@@ -32,6 +34,8 @@ export const AuthProvider = ({ children }) => {
   const [showItemForm, setShowItemForm] = useState(false);
   const [showReader, setShowReader] = useState(false);
   const [showReaderForm, setShowReaderForm] = useState(false);
+  const [showFinePaymentForm, setShowFinePaymentForm] = useState(false);
+  const [readerPaymentStatus, setReaderPaymentStatus] = useState("Paid");
 
   return (
     <AuthContext.Provider
@@ -46,6 +50,8 @@ export const AuthProvider = ({ children }) => {
         delTokenInCookie,
         accessToken,
         setAccessToken,
+        giveAccess,
+        setGiveAccess,
         dashboardFilter,
         setDashboardFilter,
         showProfile,
@@ -68,6 +74,11 @@ export const AuthProvider = ({ children }) => {
         setShowReaderForm,
         showAssignTaskForm,
         setShowAssignTaskForm,
+        giveAccess,
+        setGiveAccess,
+        showFinePaymentForm,
+        setShowFinePaymentForm,
+        readerPaymentStatus, setReaderPaymentStatus
       }}
     >
       {children}

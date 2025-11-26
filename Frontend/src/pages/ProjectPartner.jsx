@@ -11,53 +11,49 @@ import DataTable from "react-data-table-component";
 import { FiMoreVertical } from "react-icons/fi";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import Loader from "../components/Loader";
-import PartnerFilter from "../components/PartnerFilter";
+import readerFilter from "../components/ReaderFilter";
 import { RxCross2 } from "react-icons/rx";
 import { MdDone } from "react-icons/md";
 import DownloadCSV from "../components/DownloadCSV";
+import FormatPrice from "../components/FormatPrice";
 
-const ProjectPartner = () => {
+const Readers = () => {
   const {
-    showPartnerForm,
-    setShowPartnerForm,
+    showReaderForm,
+    setShowReaderForm,
     URI,
     setLoading,
     giveAccess,
     setGiveAccess,
-    showPaymentIdForm,
-    setShowPaymentIdForm,
-    showPartner,
-    setShowPartner,
+    showFinePaymentForm,
+    setShowFinePaymentForm,
+    showReader,
+    setShowReader,
     showFollowUpList,
     setShowFollowUpList,
-    partnerPaymentStatus,
-    setPartnerPaymentStatus,
+    readerStatus,
+    setReaderStatus,
   } = useAuth();
 
-  const [datas, setDatas] = useState([]);
+  const [readers, setReaders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [partnerId, setPartnerId] = useState(null);
-  const [partner, setPartner] = useState({});
-  const [selectedPartnerLister, setSelectedPartnerLister] = useState(
-    "Select Partner Lister"
-  );
+  const [readerId, setReaderId] = useState(null);
+  const [reader, setReader] = useState({});
+  const [selectedReader, setSelectedReader] = useState("Select Reader");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [newPartner, setNewPartner] = useState({
+  const [newReader, setNewReader] = useState({
+    role: "",
     fullname: "",
     contact: "",
     email: "",
     state: "",
     city: "",
-    intrest: "",
   });
 
-  const [payment, setPayment] = useState({
-    amount: "",
-    paymentid: "",
-  });
+  const [finePayment, setFinePayment] = useState("");
 
   const [followUp, setFollowUp] = useState("");
   const [followUpText, setFollowUpText] = useState("");
@@ -84,7 +80,7 @@ const ProjectPartner = () => {
   // **Fetch States from API**
   const fetchCities = async () => {
     try {
-      const response = await fetch(`${URI}/admin/cities/${newPartner?.state}`, {
+      const response = await fetch(`${URI}/admin/cities/${newReader?.state}`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -103,57 +99,55 @@ const ProjectPartner = () => {
   // **Fetch Data from API**
   const fetchData = async () => {
     try {
-      const response = await fetch(
-        `${URI}/admin/projectpartner/${selectedPartnerLister}`,
-        {
-          method: "GET",
-          credentials: "include", // Ensures cookies are sent
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${URI}/admin/readers/${selectedReader}`, {
+        method: "GET",
+        credentials: "include", // Ensures cookies are sent
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-      if (!response.ok) throw new Error("Failed to fetch Project Partner.");
+      if (!response.ok) throw new Error("Failed to fetch Readers.");
 
       const result = await response.json();
-      //console.log("Fetched Project Partner Data:", result);
+      //console.log("Fetched Project reader Data:", result);
 
       // Set the table data
-      setDatas(result);
+      setReaders(result);
     } catch (err) {
-      console.error("Error fetching project partner data:", err);
+      console.error("Error fetching Reader data:", err);
     }
   };
 
   const add = async (e) => {
     e.preventDefault();
 
-    const endpoint = newPartner.id ? `edit/${newPartner.id}` : "add";
+    const endpoint = newReader.id ? `edit/${newReader.id}` : "add";
 
     try {
       setLoading(true);
-      const response = await fetch(`${URI}/admin/projectpartner/${endpoint}`, {
-        method: newPartner.id ? "PUT" : "POST",
+      const response = await fetch(`${URI}/admin/readers/${endpoint}`, {
+        method: newReader.id ? "PUT" : "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newPartner),
+        body: JSON.stringify(newReader),
       });
 
       if (response.status === 409) {
-        alert("partner all ready exists!");
+        alert("Reader all ready exists!");
       } else if (!response.ok) {
-        throw new Error(`Failed to save partner. Status: ${response.status}`);
+        throw new Error(`Failed to save reader. Status: ${response.status}`);
       } else {
         alert(
-          newPartner.id
-            ? "Project Partner updated successfully!"
-            : "Project Partner added successfully!"
+          newReader.id
+            ? "Reader updated successfully!"
+            : "Reader added successfully!"
         );
 
-        setNewPartner({
+        setNewReader({
+          role: "",
           fullname: "",
           contact: "",
           email: "",
@@ -162,11 +156,11 @@ const ProjectPartner = () => {
           intrest: "",
         });
 
-        setShowPartnerForm(false);
+        setShowReaderForm(false);
         await fetchData();
       }
     } catch (err) {
-      console.error("Error saving Project Partner:", err);
+      console.error("Error saving Reader:", err);
     } finally {
       setLoading(false);
     }
@@ -175,38 +169,38 @@ const ProjectPartner = () => {
   //fetch data on form
   const edit = async (id) => {
     try {
-      const response = await fetch(URI + `/admin/projectpartner/get/${id}`, {
+      const response = await fetch(URI + `/admin/readers/get/${id}`, {
         method: "GET",
         credentials: "include", //  Ensures cookies are sent
         headers: {
           "Content-Type": "application/json",
         },
       });
-      if (!response.ok) throw new Error("Failed to fetch Project Partner.");
+      if (!response.ok) throw new Error("Failed to fetch Reader.");
       const data = await response.json();
       console.log(data);
-      setNewPartner(data);
-      setShowPartnerForm(true);
+      setNewReader(data);
+      setShowReaderForm(true);
     } catch (err) {
       console.error("Error fetching:", err);
     }
   };
 
   //fetch data on form
-  const viewPartner = async (id) => {
+  const viewReader = async (id) => {
     try {
-      const response = await fetch(URI + `/admin/projectpartner/get/${id}`, {
+      const response = await fetch(URI + `/admin/readers/get/${id}`, {
         method: "GET",
         credentials: "include", //  Ensures cookies are sent
         headers: {
           "Content-Type": "application/json",
         },
       });
-      if (!response.ok) throw new Error("Failed to fetch Project Partner.");
+      if (!response.ok) throw new Error("Failed to fetch Reader.");
       const data = await response.json();
       console.log(data);
-      setPartner(data);
-      setShowPartner(true);
+      setReader(data);
+      setShowReader(true);
     } catch (err) {
       console.error("Error fetching:", err);
     }
@@ -214,14 +208,11 @@ const ProjectPartner = () => {
 
   //Delete record
   const del = async (id) => {
-    if (
-      !window.confirm("Are you sure you want to delete this Project Partner?")
-    )
-      return;
+    if (!window.confirm("Are you sure you want to delete this Reader?")) return;
 
     try {
       setLoading(true);
-      const response = await fetch(URI + `/admin/projectpartner/delete/${id}`, {
+      const response = await fetch(URI + `/admin/readers/delete/${id}`, {
         method: "DELETE",
         credentials: "include", //  Ensures cookies are sent
         headers: {
@@ -231,13 +222,13 @@ const ProjectPartner = () => {
 
       const data = await response.json();
       if (response.ok) {
-        alert("Partner deleted successfully!");
+        alert("reader deleted successfully!");
         fetchData();
       } else {
         alert(`Error: ${data.message}`);
       }
     } catch (error) {
-      console.error("Error deleting Project Partner:", error);
+      console.error("Error deleting Reader:", error);
     } finally {
       setLoading(false);
     }
@@ -245,15 +236,11 @@ const ProjectPartner = () => {
 
   // change status record
   const status = async (id) => {
-    if (
-      !window.confirm(
-        "Are you sure you want to change this Project Partner status?"
-      )
-    )
+    if (!window.confirm("Are you sure you want to change this Reader status?"))
       return;
 
     try {
-      const response = await fetch(URI + `/admin/projectpartner/status/${id}`, {
+      const response = await fetch(URI + `/admin/readers/status/${id}`, {
         method: "PUT",
         credentials: "include", //  Ensures cookies are sent
         headers: {
@@ -269,25 +256,25 @@ const ProjectPartner = () => {
       }
       fetchData();
     } catch (error) {
-      console.error("Error deleting :", error);
+      console.error("Error changing status :", error);
     }
   };
 
-  // Update Payment ID
-  const updatePaymentId = async (e) => {
+  // Pay Fine Payment
+  const payFinePayment = async (e) => {
     e.preventDefault();
 
     try {
       setLoading(true);
       const response = await fetch(
-        URI + `/admin/projectpartner/update/paymentid/${partnerId}`,
+        URI + `/admin/readers/update/fine/payment/${readerId}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           credentials: "include",
-          body: JSON.stringify(payment),
+          body: JSON.stringify({ finePayment }),
         }
       );
       const data = await response.json();
@@ -297,9 +284,9 @@ const ProjectPartner = () => {
       } else {
         alert(`Error: ${data.message}`);
       }
-      setPartnerId(null);
+      setReaderId(null);
 
-      setShowPaymentIdForm(false);
+      setShowFinePaymentForm(false);
       fetchData();
     } catch (error) {
       console.error("Error deleting :", error);
@@ -312,7 +299,7 @@ const ProjectPartner = () => {
   const fetchFollowUpList = async (id) => {
     try {
       const response = await fetch(
-        URI + `/admin/projectpartner/followup/list/${id}`,
+        URI + `/admin/projectreader/followup/list/${id}`,
         {
           method: "GET",
           credentials: "include", // Ensures cookies are sent
@@ -335,7 +322,7 @@ const ProjectPartner = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${URI}/admin/projectpartner/followup/add/${partnerId}`,
+        `${URI}/admin/readers/followup/add/${readerId}`,
         {
           method: "POST",
           headers: {
@@ -350,9 +337,9 @@ const ProjectPartner = () => {
 
       if (response.ok) {
         alert(`Success: ${data.message}`);
-        setPartnerPaymentStatus("Follow Up");
+        setreaderPaymentStatus("Follow Up");
         await fetchData();
-        fetchFollowUpList(partnerId);
+        fetchFollowUpList(readerId);
       } else {
         alert(`Error: ${data.message}`);
       }
@@ -369,24 +356,20 @@ const ProjectPartner = () => {
   // Assign login record
   const assignLogin = async (e) => {
     e.preventDefault();
-    if (
-      !window.confirm(
-        "Are you sure you want to assign login to this Project Partner ?"
-      )
-    )
+    if (!window.confirm("Are you sure to assign login to this Reader ?"))
       return;
 
     try {
       setLoading(true);
       const response = await fetch(
-        URI + `/admin/projectpartner/assignlogin/${partnerId}`,
+        URI + `/admin/readers/assignlogin/${readerId}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           credentials: "include", //  Ensures cookies are sent
-          body: JSON.stringify({ partnerId, username, password }),
+          body: JSON.stringify({ readerId, username, password }),
         }
       );
       const data = await response.json();
@@ -396,7 +379,7 @@ const ProjectPartner = () => {
       } else {
         alert(`Error: ${data.message}`);
       }
-      setPartnerId(null);
+      setReaderId(null);
       setUsername("");
       setPassword("");
       setGiveAccess(false);
@@ -411,15 +394,15 @@ const ProjectPartner = () => {
   useEffect(() => {
     fetchData();
     fetchStates();
-  }, [selectedPartnerLister]);
+  }, [selectedReader]);
 
   useEffect(() => {
-    if (newPartner.state != "") {
+    if (newReader.state != "") {
       fetchCities();
     }
-  }, [newPartner.state]);
+  }, [newReader.state]);
 
-  const getPartnerCounts = (data) => {
+  const getReaderCounts = (data) => {
     return data.reduce(
       (acc, item) => {
         if (item.paymentstatus === "Success") {
@@ -443,7 +426,7 @@ const ProjectPartner = () => {
     );
   };
 
-  const partnerCounts = getPartnerCounts(datas);
+  const readerCounts = getReaderCounts(readers);
 
   const [range, setRange] = useState([
     {
@@ -453,7 +436,7 @@ const ProjectPartner = () => {
     },
   ]);
 
-  const filteredData = datas?.filter((item) => {
+  const filteredData = readers?.filter((item) => {
     const matchesSearch =
       item.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.contact?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -477,8 +460,8 @@ const ProjectPartner = () => {
       (!startDate && !endDate) ||
       (startDate && endDate && itemDate >= startDate && itemDate <= endDate);
 
-    // Enquiry filter logic: New, Alloted, Assign
-    const getPartnerPaymentStatus = () => {
+    // Reader filter logic: New, Alloted, Assign
+    const getReaderStatus = () => {
       if (item.paymentstatus === "Success") return "Paid";
       if (item.paymentstatus === "Follow Up" && item.loginstatus === "Inactive")
         return "Follow Up";
@@ -488,11 +471,9 @@ const ProjectPartner = () => {
       return "";
     };
 
-    const matchesPartner =
-      !partnerPaymentStatus ||
-      getPartnerPaymentStatus() === partnerPaymentStatus;
+    const matchesReader = !readerStatus || getReaderStatus() === readerStatus;
 
-    return matchesSearch && matchesDate && matchesPartner;
+    return matchesSearch && matchesDate && matchesReader;
   });
 
   const customStyles = {
@@ -582,7 +563,7 @@ const ProjectPartner = () => {
         return (
           <span
             onClick={() => {
-              setPartnerId(row.id);
+              setreaderId(row.id);
               fetchFollowUpList(row.id);
               setShowFollowUpList(true);
             }}
@@ -607,7 +588,7 @@ const ProjectPartner = () => {
                   : "bg-[#FBE9E9] text-[#FF0000]"
               }`}
               onClick={() => {
-                setPartnerId(row.id);
+                setReaderId(row.id);
                 setGiveAccess(true);
               }}
             >
@@ -620,19 +601,11 @@ const ProjectPartner = () => {
             </div>
           </div>
           <div className="relative group cursor-pointer">
-            <span
-              className={`${
-                row.adharno && row.panno && row.adharimage && row.panimage
-                  ? "text-green-600"
-                  : ""
-              }`}
-            >
+            <span className={`${row.idcardimage ? "text-green-600" : ""}`}>
               {row.fullname}
             </span>
             <div className="absolute w-[150px] text-center -top-12 left-[50px] -translate-x-1/2 px-2 py-2 rounded bg-black text-white text-xs hidden group-hover:block transition">
-              {row.adharno && row.panno && row.adharimage && row.panimage
-                ? "KYC Completed"
-                : "KYC Not Completed"}
+              {row.idcardimage ? "KYC Completed" : "KYC Not Completed"}
             </div>
           </div>
         </div>
@@ -647,13 +620,13 @@ const ProjectPartner = () => {
     },
     {
       name: "State",
-      selector: (row) => row.state,
+      selector: (row) => row.state || "--empty--",
       sortable: true,
       width: "150px",
     },
     {
       name: "City",
-      selector: (row) => row.city,
+      selector: (row) => row.city || "--empty--",
       sortable: true,
       width: "150px",
     },
@@ -670,7 +643,7 @@ const ProjectPartner = () => {
     const handleActionSelect = (action, id) => {
       switch (action) {
         case "view":
-          viewPartner(id);
+          viewReader(id);
           break;
         case "status":
           status(id);
@@ -679,11 +652,11 @@ const ProjectPartner = () => {
           edit(id);
           break;
         case "payment":
-          setPartnerId(id);
-          setShowPaymentIdForm(true);
+          setReaderId(id);
+          setShowFinePaymentForm(true);
           break;
         case "followup":
-          setPartnerId(id);
+          setReaderId(id);
           fetchFollowUpList(id);
           setShowFollowUpList(true);
           break;
@@ -691,7 +664,7 @@ const ProjectPartner = () => {
           del(id);
           break;
         case "assignlogin":
-          setPartnerId(id);
+          setReaderId(id);
           setGiveAccess(true);
           break;
         default:
@@ -736,26 +709,25 @@ const ProjectPartner = () => {
         <div className="w-full flex items-center justify-between gap-1 sm:gap-3">
           <div className="w-[65%] sm:min-w-[220px] sm:max-w-[230px] relative inline-block">
             <div className="flex gap-2 items-center justify-between bg-white border border-[#00000033] text-sm font-semibold  text-black rounded-lg py-1 px-3 focus:outline-none focus:ring-2 focus:ring-[#076300]">
-              <span>{selectedPartnerLister || "Select Partner Lister"}</span>
+              <span>{selectedReader || "Select Reader"}</span>
               <RiArrowDropDownLine className="w-6 h-6 text-[#000000B2]" />
             </div>
             <select
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              value={selectedPartnerLister}
+              value={selectedReader}
               onChange={(e) => {
                 const action = e.target.value;
-                setSelectedPartnerLister(action);
+                setSelectedReader(action);
               }}
             >
-              <option value="Select Partner Lister">
-                Select Partner Lister
-              </option>
-              <option value="Reparv">Reparv</option>
+              <option value="Select Reader">Select Reader</option>
+              <option value="Student">Student</option>
+              <option value="Teacher">Teacher</option>
             </select>
           </div>
           <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3 px-2">
-            <DownloadCSV data={filteredData} filename={"ProjectPartner.csv"} />
-            <AddButton label={"Add"} func={setShowPartnerForm} />
+            <DownloadCSV data={filteredData} filename={"Reader.csv"} />
+            <AddButton label={"Add"} func={setShowReaderForm} />
           </div>
         </div>
         <div className="searchBarContainer w-full flex flex-col lg:flex-row items-center justify-between gap-3">
@@ -763,7 +735,7 @@ const ProjectPartner = () => {
             <CiSearch />
             <input
               type="text"
-              placeholder="Search Partner"
+              placeholder="Search Reader"
               className="search-input w-[250px] h-[36px] text-sm text-black bg-transparent border-none outline-none"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -771,14 +743,14 @@ const ProjectPartner = () => {
           </div>
           <div className="rightTableHead w-full lg:w-[70%] sm:h-[36px] gap-2 flex flex-wrap justify-end items-center">
             <div className="flex flex-wrap items-center justify-end gap-3 px-2">
-              <PartnerFilter counts={partnerCounts} />
+              <readerFilter counts={readerCounts} />
               <div className="block">
                 <CustomDateRangePicker range={range} setRange={setRange} />
               </div>
             </div>
           </div>
         </div>
-        <h2 className="text-[16px] font-semibold">Project Partner List</h2>
+        <h2 className="text-[16px] font-semibold">Reader List</h2>
         <div className="overflow-scroll scrollbar-hide">
           <DataTable
             className="scrollbar-hide"
@@ -799,15 +771,15 @@ const ProjectPartner = () => {
 
       <div
         className={`${
-          showPartnerForm ? "flex" : "hidden"
+          showReaderForm ? "flex" : "hidden"
         } z-[61] sales-form overflow-scroll scrollbar-hide w-[400px] md:w-[700px] max-h-[70vh] fixed`}
       >
         <div className="w-[330px] sm:w-[600px] overflow-scroll scrollbar-hide md:w-[500px] lg:w-[700px] bg-white py-8 pb-10 px-3 sm:px-6 border border-[#cfcfcf33] rounded-lg">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[16px] font-semibold">Project Partner</h2>
+            <h2 className="text-[16px] font-semibold">Reader</h2>
             <IoMdClose
               onClick={() => {
-                setShowPartnerForm(false);
+                setShowReaderForm(false);
               }}
               className="w-6 h-6 cursor-pointer"
             />
@@ -816,11 +788,32 @@ const ProjectPartner = () => {
             <div className="grid gap-6 md:gap-4 grid-cols-1 ">
               <input
                 type="hidden"
-                value={newPartner.id || ""}
+                value={newReader.id || ""}
                 onChange={(e) => {
-                  setNewPartner({ ...newPartner, id: e.target.value });
+                  setNewReader({ ...newReader, id: e.target.value });
                 }}
               />
+
+              <div className="w-full ">
+                <label className="block text-sm leading-4 text-[#00000066] font-medium">
+                  Role <span className="text-red-600">*</span>
+                </label>
+                <select
+                  required
+                  className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={newReader.role}
+                  onChange={(e) => {
+                    setNewReader({
+                      ...newReader,
+                      role: e.target.value,
+                    });
+                  }}
+                >
+                  <option value="">Select Reader</option>
+                  <option value="Student">Student</option>
+                  <option value="Teacher">Teacher</option>
+                </select>
+              </div>
               <div className="w-full ">
                 <label className="block text-sm leading-4 text-[#00000066] font-medium">
                   Full Name <span className="text-red-600">*</span>
@@ -829,10 +822,10 @@ const ProjectPartner = () => {
                   type="text"
                   required
                   placeholder="Enter Full Name"
-                  value={newPartner.fullname}
+                  value={newReader.fullname}
                   onChange={(e) => {
-                    setNewPartner({
-                      ...newPartner,
+                    setNewReader({
+                      ...newReader,
                       fullname: e.target.value,
                     });
                   }}
@@ -847,13 +840,13 @@ const ProjectPartner = () => {
                   type="text"
                   required
                   placeholder="Enter Contact Number"
-                  value={newPartner.contact}
+                  value={newReader.contact}
                   onChange={(e) => {
                     const input = e.target.value;
                     if (/^\d{0,10}$/.test(input)) {
                       // Allows only up to 10 digits
-                      setNewPartner({
-                        ...newPartner,
+                      setNewReader({
+                        ...newReader,
                         contact: e.target.value,
                       });
                     }
@@ -869,10 +862,10 @@ const ProjectPartner = () => {
                   type="email"
                   required
                   placeholder="Enter Email"
-                  value={newPartner.email}
+                  value={newReader.email}
                   onChange={(e) => {
-                    setNewPartner({
-                      ...newPartner,
+                    setNewReader({
+                      ...newReader,
                       email: e.target.value,
                     });
                   }}
@@ -889,9 +882,9 @@ const ProjectPartner = () => {
                   required
                   className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-transparent"
                   style={{ backgroundImage: "none" }}
-                  value={newPartner.state}
+                  value={newReader.state}
                   onChange={(e) =>
-                    setNewPartner({ ...newPartner, state: e.target.value })
+                    setNewReader({ ...newReader, state: e.target.value })
                   }
                 >
                   <option value="">Select Your State</option>
@@ -912,10 +905,10 @@ const ProjectPartner = () => {
                   required
                   className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-transparent"
                   style={{ backgroundImage: "none" }}
-                  value={newPartner.city}
+                  value={newReader.city}
                   onChange={(e) =>
-                    setNewPartner({
-                      ...newPartner,
+                    setNewReader({
+                      ...newReader,
                       city: e.target.value,
                     })
                   }
@@ -928,58 +921,12 @@ const ProjectPartner = () => {
                   ))}
                 </select>
               </div>
-
-              <div className="w-full">
-                <label className="block text-sm leading-4 text-[#00000066] font-medium">
-                  Why are You Interested?{" "}
-                  <span className="text-red-600">*</span>
-                </label>
-                <select
-                  required
-                  value={newPartner.intrest}
-                  onChange={(e) =>
-                    setNewPartner({
-                      ...newPartner,
-                      intrest: e.target.value,
-                    })
-                  }
-                  className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="" disabled>
-                    Why are You Interested?
-                  </option>
-                  <option value="Mutual Growth Opportunity">
-                    Mutual Growth Opportunity
-                  </option>
-                  <option value="Strong Interest in Infrastructure and Development">
-                    Strong Interest in Infrastructure and Development
-                  </option>
-                  <option value="Complementary Skills and Experience">
-                    Complementary Skills and Experience
-                  </option>
-                  <option value="Market Expansion Vision">
-                    Market Expansion Vision
-                  </option>
-                  <option value="Long-Term Value Creation">
-                    Long-Term Value Creation
-                  </option>
-                  <option value="Collaborative Approach">
-                    Collaborative Approach
-                  </option>
-                  <option value="Technology Integration">
-                    Technology Integration
-                  </option>
-                  <option value="Interest in Sustainable and Smart Projects">
-                    Interest in Sustainable and Smart Projects
-                  </option>
-                </select>
-              </div>
             </div>
             <div className="flex h-10 mt-8 md:mt-6 justify-end gap-6">
               <button
                 type="button"
                 onClick={() => {
-                  setShowPartnerForm(false);
+                  setShowReaderForm(false);
                 }}
                 className="px-4 py-2 leading-4 text-[#ffffff] bg-[#000000B2] rounded active:scale-[0.98]"
               >
@@ -1000,7 +947,7 @@ const ProjectPartner = () => {
       {/* Update Payment Id Form */}
       <div
         className={` ${
-          !showPaymentIdForm && "hidden"
+          !showFinePaymentForm && "hidden"
         }  z-[61] overflow-scroll scrollbar-hide flex fixed`}
       >
         <div className="w-[330px] h-[380px] sm:w-[600px] sm:h-[400px] overflow-scroll scrollbar-hide md:w-[500px] lg:w-[700px] lg:h-[300px] bg-white py-8 pb-16 px-3 sm:px-6 border border-[#cfcfcf33] rounded-lg">
@@ -1008,18 +955,18 @@ const ProjectPartner = () => {
             <h2 className="text-[16px] font-semibold">Payment Details</h2>
             <IoMdClose
               onClick={() => {
-                setShowPaymentIdForm(false);
+                setShowFinePaymentForm(false);
               }}
               className="w-6 h-6 cursor-pointer"
             />
           </div>
-          <form onSubmit={updatePaymentId}>
+          <form onSubmit={payFinePayment}>
             <div className="w-full grid gap-4 place-items-center grid-cols-1 lg:grid-cols-2">
               <input
                 type="hidden"
-                value={partnerId || ""}
+                value={readerId || ""}
                 onChange={(e) => {
-                  setPartnerId(e.target.value);
+                  setReaderId(e.target.value);
                 }}
               />
               <div className="w-full">
@@ -1031,24 +978,9 @@ const ProjectPartner = () => {
                   required
                   placeholder="Enter Amount"
                   className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={payment.amount}
+                  value={finePayment}
                   onChange={(e) => {
-                    setPayment({ ...payment, amount: e.target.value });
-                  }}
-                />
-              </div>
-              <div className="w-full">
-                <label className="block text-sm leading-4 text-[#00000066] font-medium">
-                  Payment ID
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Enter Payment ID"
-                  className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={payment.paymentid}
-                  onChange={(e) => {
-                    setPayment({ ...payment, paymentid: e.target.value });
+                    setFinePayment(e.target.value);
                   }}
                 />
               </div>
@@ -1058,7 +990,7 @@ const ProjectPartner = () => {
                 type="submit"
                 className="px-4 py-2 text-white bg-[#076300] rounded active:scale-[0.98]"
               >
-                Update Payment ID
+                Pay Fine Payment
               </button>
               <Loader></Loader>
             </div>
@@ -1066,7 +998,6 @@ const ProjectPartner = () => {
         </div>
       </div>
 
-      {/* Update Payment Id Form */}
       <div
         className={` ${
           !showFollowUpList && "hidden"
@@ -1074,7 +1005,7 @@ const ProjectPartner = () => {
       >
         <div className="w-[330px] sm:w-[600px]  overflow-scroll scrollbar-hide md:w-[500px] lg:w-[700px] max-h-[75vh] bg-white py-8 pb-16 px-3 sm:px-6 border border-[#cfcfcf33] rounded-lg">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[16px] font-semibold">Partner Follow Up</h2>
+            <h2 className="text-[16px] font-semibold">reader Follow Up</h2>
             <IoMdClose
               onClick={() => {
                 setShowFollowUpList(false);
@@ -1246,9 +1177,9 @@ const ProjectPartner = () => {
             <div className="w-full grid gap-4 place-items-center grid-cols-1 lg:grid-cols-2">
               <input
                 type="hidden"
-                value={partnerId || ""}
+                value={readerId || ""}
                 onChange={(e) => {
-                  setPartnerId(e.target.value);
+                  setReaderId(e.target.value);
                 }}
               />
               <div className="w-full">
@@ -1295,34 +1226,20 @@ const ProjectPartner = () => {
         </div>
       </div>
 
-      {/* Show Project Partner details */}
+      {/* Show Reader details */}
       <div
         className={`${
-          showPartner ? "flex" : "hidden"
+          showReader ? "flex" : "hidden"
         } z-[61] property-form overflow-scroll scrollbar-hide w-[400px] h-[70vh] md:w-[700px] fixed`}
       >
         <div className="w-[330px] sm:w-[600px] overflow-scroll scrollbar-hide md:w-[500px] lg:w-[700px] bg-white py-8 pb-16 px-3 sm:px-6 border border-[#cfcfcf33] rounded-lg">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[16px] font-semibold">
-              Project Partner Details
-            </h2>
+            <h2 className="text-[16px] font-semibold">Reader Details</h2>
             <IoMdClose
               onClick={() => {
-                setShowPartner(false);
+                setShowReader(false);
               }}
               className="w-6 h-6 cursor-pointer"
-            />
-          </div>
-          <div className="w-full ">
-            <label className="block text-sm leading-4 text-[#00000066] font-medium">
-              Why Intrested to Join Reparv
-            </label>
-            <input
-              type="text"
-              disabled
-              className="w-full my-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={partner.intrest}
-              readOnly
             />
           </div>
           <form className="grid gap-6 md:gap-4 grid-cols-1 lg:grid-cols-2">
@@ -1334,7 +1251,7 @@ const ProjectPartner = () => {
                 type="text"
                 disabled
                 className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.status}
+                value={reader.status}
                 readOnly
               />
             </div>
@@ -1346,7 +1263,7 @@ const ProjectPartner = () => {
                 type="text"
                 disabled
                 className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.loginstatus}
+                value={reader.loginstatus}
                 readOnly
               />
             </div>
@@ -1358,33 +1275,19 @@ const ProjectPartner = () => {
                 type="text"
                 disabled
                 className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.paymentstatus}
+                value={reader.paymentstatus}
                 readOnly
               />
             </div>
-            <div
-              className={`${partner.paymentid === null ? "hidden" : "block"}`}
-            >
+            <div className={`${reader.fine === null ? "hidden" : "block"}`}>
               <label className="block text-sm leading-4 text-[#00000066] font-medium">
-                Payment ID
+                Fine
               </label>
               <input
                 type="text"
                 disabled
                 className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.paymentid}
-                readOnly
-              />
-            </div>
-            <div className={`${partner.amount === null ? "hidden" : "block"}`}>
-              <label className="block text-sm leading-4 text-[#00000066] font-medium">
-                Registration Amount
-              </label>
-              <input
-                type="text"
-                disabled
-                className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.amount}
+                value={<FormatPrice price={parseFloat(reader.fine)} />}
                 readOnly
               />
             </div>
@@ -1396,7 +1299,7 @@ const ProjectPartner = () => {
                 type="text"
                 disabled
                 className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.fullname}
+                value={reader.fullname}
                 readOnly
               />
             </div>
@@ -1408,7 +1311,7 @@ const ProjectPartner = () => {
                 type="text"
                 disabled
                 className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.contact}
+                value={reader.contact}
                 readOnly
               />
             </div>
@@ -1420,67 +1323,31 @@ const ProjectPartner = () => {
                 type="text"
                 disabled
                 className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.email}
+                value={reader.email}
                 readOnly
               />
             </div>
             <div className="w-full ">
               <label className="block text-sm leading-4 text-[#00000066] font-medium">
-                Experience
+                Department
               </label>
               <input
                 type="text"
                 disabled
                 className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.experience}
+                value={reader.department}
                 readOnly
               />
             </div>
             <div className="w-full ">
               <label className="block text-sm leading-4 text-[#00000066] font-medium">
-                Bank Name
+                Year of study
               </label>
               <input
                 type="text"
                 disabled
                 className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.bankname}
-                readOnly
-              />
-            </div>
-            <div className="w-full ">
-              <label className="block text-sm leading-4 text-[#00000066] font-medium">
-                Account Holder Name
-              </label>
-              <input
-                type="text"
-                disabled
-                className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.accountholdername}
-                readOnly
-              />
-            </div>
-            <div className="w-full ">
-              <label className="block text-sm leading-4 text-[#00000066] font-medium">
-                Account Number
-              </label>
-              <input
-                type="text"
-                disabled
-                className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.accountnumber}
-                readOnly
-              />
-            </div>
-            <div className="w-full ">
-              <label className="block text-sm leading-4 text-[#00000066] font-medium">
-                IFSC Code
-              </label>
-              <input
-                type="text"
-                disabled
-                className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.ifsc}
+                value={reader.yearofstudy}
                 readOnly
               />
             </div>
@@ -1492,7 +1359,7 @@ const ProjectPartner = () => {
                 type="text"
                 disabled
                 className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.address}
+                value={reader.address}
                 readOnly
               />
             </div>
@@ -1504,7 +1371,7 @@ const ProjectPartner = () => {
                 type="text"
                 disabled
                 className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.state}
+                value={reader.state}
                 readOnly
               />
             </div>
@@ -1516,7 +1383,7 @@ const ProjectPartner = () => {
                 type="text"
                 disabled
                 className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.city}
+                value={reader.city}
                 readOnly
               />
             </div>
@@ -1528,60 +1395,23 @@ const ProjectPartner = () => {
                 type="text"
                 disabled
                 className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.pincode}
+                value={reader.pincode}
                 readOnly
               />
             </div>
 
-            <div></div>
-            <div className="w-full ">
-              <label className="block text-sm leading-4 text-[#00000066] font-medium">
-                Adhar No
-              </label>
-              <input
-                type="text"
-                disabled
-                className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.adharno}
-                readOnly
-              />
-            </div>
-            <div className="w-full ">
-              <label className="block text-sm leading-4 text-[#00000066] font-medium">
-                Pancard No
-              </label>
-              <input
-                type="text"
-                disabled
-                className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.panno}
-                readOnly
-              />
-            </div>
-            <div className={`w-full ${partner.rerano ? "block" : "hidden"}`}>
-              <label className="block text-sm leading-4 text-[#00000066] font-medium">
-                RERA No
-              </label>
-              <input
-                type="text"
-                disabled
-                className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={partner.rerano}
-                readOnly
-              />
-            </div>
-            {/* Aadhar Images */}
+            {/* Identity Card Image */}
             <div
-              className={`w-full ${partner.adharimage ? "block" : "hidden"}`}
+              className={`w-full ${reader.idcardimage ? "block" : "hidden"}`}
             >
               <label className="block text-sm leading-4 text-[#00000066] font-medium">
-                Aadhar Images
+                ID Card Image
               </label>
 
               <div className="grid grid-cols-2 gap-3 mt-2">
                 {(() => {
                   try {
-                    const images = JSON.parse(partner.adharimage); // parse JSON array
+                    const images = JSON.parse(reader.idcardimage); // parse JSON array
                     return images.map((img, index) => (
                       <img
                         key={index}
@@ -1590,69 +1420,11 @@ const ProjectPartner = () => {
                         }}
                         className="w-full border border-[#00000033] rounded-[4px] object-cover cursor-pointer"
                         src={`${URI}${img}`}
-                        alt={`Aadhar ${index + 1}`}
+                        alt={`ID CARD ${index + 1}`}
                       />
                     ));
                   } catch (err) {
-                    console.error("Invalid JSON in adharimage:", err);
-                    return null;
-                  }
-                })()}
-              </div>
-            </div>
-
-            {/* PAN Images */}
-            <div className={`w-full ${partner.panimage ? "block" : "hidden"}`}>
-              <label className="block text-sm leading-4 text-[#00000066] font-medium">
-                PAN Card Images
-              </label>
-
-              <div className="grid grid-cols-2 gap-3 mt-2">
-                {(() => {
-                  try {
-                    const images = JSON.parse(partner.panimage); // parse JSON array
-                    return images.map((img, index) => (
-                      <img
-                        key={index}
-                        onClick={() => {
-                          window.open(`${URI}${img}`, "_blank");
-                        }}
-                        className="w-full border border-[#00000033] rounded-[4px] object-cover cursor-pointer"
-                        src={`${URI}${img}`}
-                        alt={`PAN ${index + 1}`}
-                      />
-                    ));
-                  } catch (err) {
-                    console.error("Invalid JSON in panimage:", err);
-                    return null;
-                  }
-                })()}
-              </div>
-            </div>
-
-            {/* RERA Images */}
-            <div className={`w-full ${partner.reraimage ? "block" : "hidden"}`}>
-              <label className="block text-sm leading-4 text-[#00000066] font-medium">
-                RERA Images
-              </label>
-
-              <div className="grid grid-cols-2 gap-3 mt-2">
-                {(() => {
-                  try {
-                    const images = JSON.parse(partner.reraimage); // parse JSON array
-                    return images.map((img, index) => (
-                      <img
-                        key={index}
-                        onClick={() => {
-                          window.open(`${URI}${img}`, "_blank");
-                        }}
-                        className="w-full border border-[#00000033] rounded-[4px] object-cover cursor-pointer"
-                        src={`${URI}${img}`}
-                        alt={`RERA ${index + 1}`}
-                      />
-                    ));
-                  } catch (err) {
-                    console.error("Invalid JSON in reraimage:", err);
+                    console.error("Invalid JSON in ID Card Image:", err);
                     return null;
                   }
                 })()}
@@ -1665,4 +1437,4 @@ const ProjectPartner = () => {
   );
 };
 
-export default ProjectPartner;
+export default Readers;
