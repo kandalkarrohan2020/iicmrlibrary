@@ -13,6 +13,7 @@ import dashboardRoutes from "./routes/admin/dashboardRoutes.js";
 import roleRoutes from "./routes/admin/roleRoutes.js";
 import stateRoutes from "./routes/admin/stateRoutes.js";
 import cityRoutes from "./routes/admin/cityRoutes.js";
+import readerRoutes from "./routes/admin/readerRoutes.js";
 
 // Account Cancellation Route
 import accountCancellation from "./routes/accountCancellationRoutes.js";
@@ -129,6 +130,7 @@ app.use("/admin/dashboard", dashboardRoutes);
 app.use("/admin/roles", roleRoutes);
 app.use("/admin/states", stateRoutes);
 app.use("/admin/cities", cityRoutes);
+app.use("/admin/readers", readerRoutes);
 
 // Test Database Connection on Startup
 db.getConnection((err, connection) => {

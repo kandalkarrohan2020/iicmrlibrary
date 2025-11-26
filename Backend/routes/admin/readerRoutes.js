@@ -10,10 +10,12 @@ import {
   status,
   del,
   assignLogin,
-  updatePaymentId,
+  payFinePayment,
   addFollowUp,
   fetchFollowUpList,
-} from "../../controllers/admin/partnerController.js";
+  getMenus,
+  assignTask,
+} from "../../controllers/admin/readerController.js";
 
 const router = express.Router();
 
@@ -39,8 +41,9 @@ const upload = multer({
 });
 
 router.get("/active", getAllActive);
+router.get("/get/menus", getMenus);
 router.get("/get/:id", getById);
-router.get("/:partnerlister", getAll);
+router.get("/:role", getAll);
 
 router.post(
   "/add",
@@ -59,9 +62,10 @@ router.put(
     edit
   );
 router.put("/status/:id", status);
-router.put("/update/paymentid/:id", updatePaymentId);
+router.put("/update/paymentid/:id", payFinePayment);
 router.get("/followup/list/:id", fetchFollowUpList);
 router.post("/followup/add/:id", addFollowUp);
+router.put("/assign/tasks/:id", assignTask);
 router.put("/assignlogin/:id", assignLogin);
 router.delete("/delete/:id", del);
 
