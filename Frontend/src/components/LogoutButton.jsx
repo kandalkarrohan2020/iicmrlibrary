@@ -5,7 +5,7 @@ import { useAuth } from "../store/auth";
 
 function LogoutButton() {
   const navigate = useNavigate();
-  const { delTokenInCookie, URI } = useAuth();
+  const { delTokenInCookie, URI, setUser } = useAuth();
   const userLogout = async () => {
     try {
       await axios.post(
@@ -15,6 +15,7 @@ function LogoutButton() {
       );
       delTokenInCookie();
       localStorage.removeItem("user");
+      setUser({});
       navigate("/", { replace: true });
     } catch (error) {
       console.log("Logout failed:", error);

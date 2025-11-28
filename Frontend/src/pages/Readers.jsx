@@ -330,24 +330,6 @@ const Readers = () => {
     }
   };
 
-  //fetch data on Tasks form
-  const viewTasks = async (id) => {
-    try {
-      const response = await fetch(URI + `/admin/readers/${id}`, {
-        method: "GET",
-        credentials: "include", //  Ensures cookies are sent
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) throw new Error("Failed to fetch Reader tasks.");
-      const data = await response.json();
-      setTask({ ...task, menus: JSON.parse(data.menus) });
-    } catch (err) {
-      console.error("Error fetching :", err);
-    }
-  };
-
   //Fetch Menus
   const fetchMenus = async () => {
     try {
@@ -364,6 +346,25 @@ const Readers = () => {
       console.log(data);
     } catch (err) {
       console.error("Error fetching Menus:", err);
+    }
+  };
+
+  //fetch data on Tasks form
+  const viewTasks = async (id) => {
+    try {
+      const response = await fetch(URI + `/admin/readers/get/${id}`, {
+        method: "GET",
+        credentials: "include", //  Ensures cookies are sent
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) throw new Error("Failed to fetch Reader tasks.");
+      const data = await response.json();
+      setTask({ ...task, menus: JSON.parse(data.menus) });
+      setShowAssignTaskForm(true);
+    } catch (err) {
+      console.error("Error fetching :", err);
     }
   };
 
@@ -442,7 +443,7 @@ const Readers = () => {
 
       if (response.ok) {
         alert(`Success: ${data.message}`);
-        setreaderPaymentStatus("Follow Up");
+        setReaderPaymentStatus("Follow Up");
         await fetchData();
         fetchFollowUpList(readerId);
       } else {
@@ -678,6 +679,12 @@ const Readers = () => {
       width: "150px",
     },
     {
+      name: "Department",
+      selector: (row) => row.department || "-- Empty --",
+      sortable: true,
+      width: "150px",
+    },
+    {
       name: "Fine",
       selector: (row) => <FormatPrice price={parseFloat(row.fine || 0)} />,
       sortable: true,
@@ -718,10 +725,9 @@ const Readers = () => {
           del(id);
           break;
         case "assignTask":
-          viewTasks(id);
           fetchMenus();
           setReaderId(id);
-          setShowAssignTaskForm(true);
+          viewTasks(id);
           break;
         case "assignlogin":
           setReaderId(id);
@@ -860,7 +866,7 @@ const Readers = () => {
                 </label>
                 <select
                   required
-                  className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+                  className="w-full mt-[4px] text-[16px] font-medium p-2 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
                   value={newReader.role}
                   onChange={(e) => {
                     setNewReader({
@@ -889,7 +895,7 @@ const Readers = () => {
                       fullname: e.target.value,
                     });
                   }}
-                  className="w-full mt-[10px] text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-[4px] text-[16px] font-medium p-2 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="w-full">
@@ -911,7 +917,7 @@ const Readers = () => {
                       });
                     }
                   }}
-                  className="w-full mt-2 text-[16px] font-medium p-4 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 text-[16px] font-medium p-2 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="w-full ">
@@ -1468,7 +1474,11 @@ const Readers = () => {
                 readOnly
               />
             </div>
-            <div className="w-full ">
+            <div
+              className={`${
+                reader.department === null ? "hidden" : "block"
+              } w-full`}
+            >
               <label className="block text-sm leading-4 text-[#00000066] font-medium">
                 Department
               </label>
@@ -1480,7 +1490,11 @@ const Readers = () => {
                 readOnly
               />
             </div>
-            <div className="w-full ">
+            <div
+              className={`${
+                reader.yearofstudy === null ? "hidden" : "block"
+              } w-full`}
+            >
               <label className="block text-sm leading-4 text-[#00000066] font-medium">
                 Year of study
               </label>
@@ -1489,6 +1503,22 @@ const Readers = () => {
                 disabled
                 className="w-full mt-[4px] text-[16px] font-medium p-2 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={reader.yearofstudy}
+                readOnly
+              />
+            </div>
+            <div
+              className={`${
+                reader.designation === null ? "hidden" : "block"
+              } w-full`}
+            >
+              <label className="block text-sm leading-4 text-[#00000066] font-medium">
+                Designation
+              </label>
+              <input
+                type="text"
+                disabled
+                className="w-full mt-[4px] text-[16px] font-medium p-2 border border-[#00000033] rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={reader.designation}
                 readOnly
               />
             </div>

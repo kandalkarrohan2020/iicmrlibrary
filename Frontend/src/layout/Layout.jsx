@@ -11,6 +11,10 @@ import { FaUserCircle } from "react-icons/fa";
 import { MdSpaceDashboard } from "react-icons/md";
 import { PiBooksFill } from "react-icons/pi";
 import { FaBookReader } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
+import { FaUserTag } from "react-icons/fa6";
+import { FaUserGear } from "react-icons/fa6";
+import { IoMdSettings } from "react-icons/io";
 
 function Layout() {
   const location = useLocation();
@@ -19,7 +23,8 @@ function Layout() {
   const [heading, setHeading] = useState(localStorage.getItem("head"));
   const {
     showProfile,
-    URI, user,
+    URI,
+    user,
     setShowProfile,
     showRole,
     setShowRole,
@@ -73,11 +78,34 @@ function Layout() {
       label: "Readers",
     },
     {
+      to: "/vendor",
+      icon: <FaUserTag size={20} />,
+      label: "Vendor",
+    },
+    {
+      to: "/staff",
+      icon: <FaUser size={18} />,
+      label: "Staff",
+    },
+    {
       to: "/roles",
-      icon: <FaBookReader size={18} />,
+      icon: <FaUserGear size={20} />,
       label: "Roles",
     },
+    {
+      to: "/manage-items",
+      icon: <IoMdSettings size={20} />,
+      label: "Manage Items",
+    },
   ];
+
+  const [assignedMenus, setAssignedMenus] = useState(
+    JSON.parse(localStorage.getItem("user"))
+  );
+
+  useEffect(() => {
+    setAssignedMenus(JSON.parse(localStorage.getItem("user")));
+  }, []);
 
   return (
     <div className="flex flex-col w-full h-screen bg-[#F5F5F6]">
@@ -189,7 +217,9 @@ function Layout() {
               </span>
             </NavLink>
             {menus
-              .filter((menu) => user?.assignMenus?.includes(menu.label))
+              .filter((menu) =>
+                assignedMenus?.assignMenus?.includes(menu.label)
+              )
               .map(({ to, icon, label }) => (
                 <NavLink
                   onClick={() => {

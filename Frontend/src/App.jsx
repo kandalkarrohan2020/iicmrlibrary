@@ -7,6 +7,7 @@ import Layout from "./layout/Layout.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Items from "./pages/Items.jsx";
+import ManageItems from "./pages/ManageItems.jsx";
 import Readers from "./pages/Readers.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
@@ -14,6 +15,7 @@ import ScrollToTop from "./components/ScrollToTop.jsx";
 import Role from "./pages/Role.jsx";
 import Vendor from "./pages/Vendor.jsx";
 import Staff from "./pages/Staff.jsx";
+import KYC from "./pages/KYC.jsx";
 
 const App = () => {
   const { URI, setLoading, user } = useAuth();
@@ -23,8 +25,20 @@ const App = () => {
       menu: <Route path="/items" element={<Items />} />,
     },
     {
+      name: "Manage Items",
+      menu: <Route path="/manage-items" element={<ManageItems />} />,
+    },
+    {
       name: "Readers",
       menu: <Route path="/readers" element={<Readers />} />,
+    },
+    {
+      name: "Vendor",
+      menu: <Route path="/vendor" element={<Vendor />} />,
+    },
+    {
+      name: "Staff",
+      menu: <Route path="/staff" element={<Staff />} />,
     },
     {
       name: "Record",
@@ -51,6 +65,7 @@ const App = () => {
         <Route path="" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/kyc/:userid" element={<KYC />} />
         <Route path="/" element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           {/* Menu Wise Dynamic Routes */}

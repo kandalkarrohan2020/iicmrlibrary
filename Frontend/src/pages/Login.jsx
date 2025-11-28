@@ -78,13 +78,16 @@ function Login() {
         console.log("Login Successful", response.data);
         localStorage.setItem("user", JSON.stringify(response.data.user));
         storeTokenInCookie(response.data.token);
-        navigate("/dashboard", { replace: true });
-        {
-          /* if (response.data.user.adharId != null) {
+        //navigate("/dashboard", { replace: true });
+        if (
+          response.data.user.role != "Student" &&
+          response.data.user.role != "Teacher"
+        ) {
+          navigate("/dashboard", { replace: true });
+        } else if (response.data.user.idcardimage) {
           navigate("/dashboard", { replace: true });
         } else {
           navigate(`/kyc/${response.data.user.id}`, { replace: true });
-        }*/
         }
       } else {
         setErrorMessage("Invalid login credentials.");
