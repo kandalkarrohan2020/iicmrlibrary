@@ -39,9 +39,9 @@ export const editProfile = (req, res) => {
   }
 
   const currentdate = moment().format("YYYY-MM-DD HH:mm:ss");
-  const { name, username, contact, email } = req.body;
+  const { fullname, username, contact, email } = req.body;
 
-  if (!name || !username || !contact || !email) {
+  if (!fullname || !username || !contact || !email) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -59,9 +59,9 @@ export const editProfile = (req, res) => {
     const existingImage = result[0].userimage;
     const finalImagePath = req.file ? `/uploads/${req.file.filename}` : existingImage;
 
-    let updateSql = `UPDATE users SET name = ?, username = ?, contact = ?, email = ?, userimage = ?, updated_at = ? WHERE id = ?`;
+    let updateSql = `UPDATE users SET fullname = ?, username = ?, contact = ?, email = ?, userimage = ?, updated_at = ? WHERE id = ?`;
     const updateValues = [
-      name,
+      fullname,
       username,
       contact,
       email,
