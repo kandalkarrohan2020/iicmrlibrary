@@ -6,6 +6,7 @@ import Loader from "./Loader";
 import { IoMdClose } from "react-icons/io";
 import { FaEdit } from "react-icons/fa";
 import { IoCheckmarkDoneCircleSharp } from "react-icons/io5";
+import libraryLogo from "../assets/layout/libraryLogo.png";
 
 const Profile = () => {
   const { showProfile, setShowProfile, setLoading, URI } = useAuth();
@@ -64,6 +65,21 @@ const Profile = () => {
 
   const editProfile = async (e) => {
     e.preventDefault();
+
+    const allowedImageTypes = ["image/jpeg", "image/png", "image/jpg"];
+    const maxFileSize = 1 * 1024 * 1024; // 1 MB
+
+    // Validate file
+    if (selectedImage) {
+      if (!allowedImageTypes.includes(selectedImage.type)) {
+        alert("Only JPG, JPEG, PNG, image are allowed for Id Card Image.");
+        return;
+      }
+      if (selectedImage.size > maxFileSize) {
+        alert("Id card Image size must be less than 1MB.");
+        return;
+      }
+    }
 
     const formData = new FormData();
     formData.append("fullname", newUser.fullname);
@@ -171,7 +187,7 @@ const Profile = () => {
         </div>
         <div className="profileImgContainer w-[320px] h-[300px] bg-[#FFFFFF] flex flex-col items-center justify-center p-5 gap-3 rounded-[20px] shadow-[#0000001A] ">
           <img
-            src={`${URI}${user?.userimage}`}
+            src={`${user?.userimage ? URI + user?.userimage : libraryLogo}`}
             alt=""
             className="w-[120px] h-[120px] rounded-[50%]"
           />
@@ -185,7 +201,11 @@ const Profile = () => {
 
         <Link
           to={`/kyc/${user?.id}`}
-          className={`${user?.role === "Student" || user?.role === "Student" ? "block" : "hidden"} userOtherDetails cursor-pointer text-[#076300] active:scale-95 w-[320px] h-[40px] bg-[#FFFFFF] hover:bg-[#00760c] hover:text-[#FFFFFF] flex flex-col items-center justify-center p-5 gap-3 rounded-[20px] shadow-[#0000001A] `}
+          className={`${
+            user?.role === "Student" || user?.role === "Student"
+              ? "block"
+              : "hidden"
+          } userOtherDetails cursor-pointer text-[#076300] active:scale-95 w-[320px] h-[40px] bg-[#FFFFFF] hover:bg-[#00760c] hover:text-[#FFFFFF] flex flex-col items-center justify-center p-5 gap-3 rounded-[20px] shadow-[#0000001A] `}
         >
           <h2 className="text-[16px] leading-5 font-semibold flex gap-2 items-center justify-center">
             <span>KYC Details</span>{" "}

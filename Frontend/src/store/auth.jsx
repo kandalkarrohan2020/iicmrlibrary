@@ -17,8 +17,8 @@ export const AuthProvider = ({ children }) => {
     Cookies.remove("accessToken");
   };
 
-  const URI = "http://localhost:8080";
-  //const URI = "https://api-iicmrlibrary.onrender.com"
+  //const URI = "http://localhost:8080";
+  const URI = "https://api-iicmrlibrary.onrender.com"
 
   const [loading, setLoading] = useState(false);
   const [giveAccess, setGiveAccess] = useState(false);
