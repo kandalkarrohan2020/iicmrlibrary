@@ -47,20 +47,14 @@ router.get("/:role", getAll);
 
 router.post(
   "/add",
-  upload.fields([
-    { name: "adharImage", maxCount: 2 },
-    { name: "panImage", maxCount: 2 },
-  ]),
+  upload.single("idcardimage"),
   add
 );
 router.put(
-    "/edit/:id",
-    upload.fields([
-      { name: "adharImage", maxCount: 2 },
-      { name: "panImage", maxCount: 2 },
-    ]),
-    edit
-  );
+  "/edit/:id",
+  upload.single("idcardimage"),
+  edit
+);
 router.put("/status/:id", status);
 router.put("/update/paymentid/:id", payFinePayment);
 router.get("/followup/list/:id", fetchFollowUpList);
