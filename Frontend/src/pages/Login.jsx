@@ -89,6 +89,7 @@ function Login() {
         } else {
           navigate(`/kyc/${response.data.user.id}`, { replace: true });
         }
+        window.location.reload();
       } else {
         setErrorMessage("Invalid login credentials.");
       }

@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./store/auth.jsx";
 import Layout from "./layout/Layout.jsx";
@@ -55,9 +55,18 @@ const App = () => {
     { name: "Roles", menu: <Route path="/roles" element={<Role />} /> },
   ]);
 
-  const dynamicRoutes = menus.filter((menu) =>
-    user?.assignMenus?.includes(menu.name)
+  const [assignedMenus, setAssignedMenus] = useState(
+    JSON.parse(localStorage.getItem("user"))
   );
+
+  useEffect(() => {
+    setAssignedMenus(JSON.parse(localStorage.getItem("user")));
+  }, []);
+
+  const dynamicRoutes = menus.filter((menu) =>
+    assignedMenus?.assignMenus?.includes(menu.name)
+  );
+
   return (
     <BrowserRouter>
       <ScrollToTop />
