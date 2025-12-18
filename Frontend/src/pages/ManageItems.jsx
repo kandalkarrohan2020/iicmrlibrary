@@ -120,36 +120,47 @@ const ManageItems = () => {
     }
   };
 
-  // ADD / UPDATE
   const add = async (e) => {
     e.preventDefault();
+
     try {
       setLoading(true);
+
       const formData = new FormData();
-      // Append data
+
       Object.entries(newItem).forEach(([key, value]) => {
         if (value !== null && value !== undefined && value !== "") {
           formData.append(key, value);
         }
       });
 
-      if (selectedImage) formData.append("image", selectedImage);
+      if (selectedImage) {
+        formData.append("image", selectedImage);
+      }
 
-      const res = await fetch(`${URI}/admin/items/add`, {
-        method: "POST",
+      const isEdit = Boolean(newItem.itemId);
+      const endpoint = isEdit
+        ? `${URI}/admin/items/edit/${newItem.itemId}`
+        : `${URI}/admin/items/add`;
+
+      const response = await fetch(endpoint, {
+        method: isEdit ? "PUT" : "POST",
         credentials: "include",
-        body: formData,
+        body: formData, // NOT JSON
       });
 
-      if (!res.ok) throw new Error("Save failed");
+      const data = await response.json();
 
-      alert("Saved successfully");
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to save item");
+      }
+
+      alert(isEdit ? "Item updated successfully!" : "Item added successfully!");
+
       setShowItemForm(false);
       setSelectedImage(null);
       setNewItem({
         title: "",
-        price: "",
-        prnno: "",
         description: "",
         author_name: "",
         publisher: "",
@@ -163,9 +174,11 @@ const ManageItems = () => {
         shelf_location: "",
         image: "",
       });
+
       fetchData();
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error("Error saving item:", err);
+      alert(err.message);
     } finally {
       setLoading(false);
     }
