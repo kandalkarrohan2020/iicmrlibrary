@@ -14,6 +14,10 @@ import roleRoutes from "./routes/admin/roleRoutes.js";
 import stateRoutes from "./routes/admin/stateRoutes.js";
 import cityRoutes from "./routes/admin/cityRoutes.js";
 import readerRoutes from "./routes/admin/readerRoutes.js";
+import manageItemsRoutes from "./routes/admin/manageItemsRoutes.js";
+
+// Frontend Routes
+import itemsRoutes from  "./routes/frontend/itemsRoutes.js";
 
 // Account Cancellation Route
 import accountCancellation from "./routes/accountCancellationRoutes.js";
@@ -131,6 +135,10 @@ app.use("/admin/roles", roleRoutes);
 app.use("/admin/states", stateRoutes);
 app.use("/admin/cities", cityRoutes);
 app.use("/admin/readers", readerRoutes);
+app.use("/admin/items", manageItemsRoutes);
+
+// Frontend Routes
+app.use("/frontend/items", itemsRoutes);
 
 // Test Database Connection on Startup
 db.getConnection((err, connection) => {
