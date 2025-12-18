@@ -3,6 +3,7 @@ import { useAuth } from "../store/auth";
 import { Link } from "react-router-dom";
 import itemImage from "../assets/items/image.webp";
 import { IoMdTrendingUp } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 const HERO_BG =
   "linear-gradient(180deg, #E6F4EA 0%, #FFFFFF 50%, #DFF7E2 100%)";
@@ -19,6 +20,7 @@ const FILTERS = [
 ];
 
 export default function Items() {
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState("All");
   const [query, setQuery] = useState("");
   const [visibleCount, setVisibleCount] = useState(12);
@@ -40,6 +42,30 @@ export default function Items() {
       setItems(data);
     } catch (err) {
       console.error("Error fetching Items:", err);
+    }
+  };
+
+  const borrowItem = async (id) => {
+    try {
+      const response = await fetch(`${URI}/frontend/items/borrow/${id}`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.message || "Borrow failed");
+      }
+
+      const data = await response.json();
+      console.log(data.message);
+
+      alert(data.message);
+
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Error borrowing item:", err.message);
+      alert(err.message);
     }
   };
 
@@ -276,6 +302,11 @@ export default function Items() {
 
                   {/* Borrow Button */}
                   <button
+                    onClick={() => {
+                      if (b.available_copies !== 0) {
+                        borrowItem(b.itemId);
+                      }
+                    }}
                     disabled={b.available_copies === 0}
                     className={`w-full mt-3 py-2 rounded-md text-sm font-medium transition-colors ${
                       b.available_copies > 0

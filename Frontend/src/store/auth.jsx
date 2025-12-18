@@ -37,6 +37,9 @@ export const AuthProvider = ({ children }) => {
   const [showFinePaymentForm, setShowFinePaymentForm] = useState(false);
   const [readerPaymentStatus, setReaderPaymentStatus] = useState("Paid");
 
+  const [showIssueForm, setShowIssueForm] = useState(false);
+  const [showCustomer, setShowCustomer] = useState(false);
+
   return (
     <AuthContext.Provider
       value={{
@@ -78,7 +81,9 @@ export const AuthProvider = ({ children }) => {
         setGiveAccess,
         showFinePaymentForm,
         setShowFinePaymentForm,
-        readerPaymentStatus, setReaderPaymentStatus
+        readerPaymentStatus, setReaderPaymentStatus,
+        showIssueForm, setShowIssueForm,
+        showCustomer, setShowCustomer,
       }}
     >
       {children}

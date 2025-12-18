@@ -44,6 +44,9 @@ function Layout() {
     setGiveAccess,
     showFinePaymentForm,
     setShowFinePaymentForm,
+    showIssueForm,
+    setShowIssueForm,
+    showCustomer, setShowCustomer,
     isLoggedIn,
   } = useAuth();
 
@@ -52,6 +55,8 @@ function Layout() {
     { state: showRoleForm, setter: setShowRoleForm },
     { state: showItem, setter: setShowItem },
     { state: showItemForm, setter: setShowItemForm },
+    { state: showIssueForm, setter: setShowIssueForm },
+    { state: showCustomer, setter: setShowCustomer },
     { state: showReader, setter: setShowReader },
     { state: showReaderForm, setter: setShowReaderForm },
     { state: showAssignTaskForm, setter: setShowAssignTaskForm },

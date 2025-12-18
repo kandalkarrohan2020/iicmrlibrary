@@ -713,7 +713,7 @@ const ManageItems = () => {
                 />
               </div>
 
-              <div className={`col-span-2 w-full`}>
+              <div className={`col-span-1 lg:col-span-2 w-full`}>
                 <label
                   htmlFor="description"
                   className="block ml-1 text-sm leading-4 text-[#00000066] font-medium"
