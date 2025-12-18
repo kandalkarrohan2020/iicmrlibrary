@@ -1,5 +1,7 @@
 import express from "express";
-import {getCount} from "../../controllers/admin/dashboardController.js";
+import {
+  getCount,
+} from "../../controllers/frontend/dashboardController.js";
 
 const router = express.Router();
 

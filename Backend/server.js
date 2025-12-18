@@ -15,9 +15,12 @@ import stateRoutes from "./routes/admin/stateRoutes.js";
 import cityRoutes from "./routes/admin/cityRoutes.js";
 import readerRoutes from "./routes/admin/readerRoutes.js";
 import manageItemsRoutes from "./routes/admin/manageItemsRoutes.js";
+import issueRoutes from "./routes/admin/issueRoutes.js";
 
 // Frontend Routes
 import itemsRoutes from  "./routes/frontend/itemsRoutes.js";
+import frontendDashboardRoutes from "./routes/frontend/dashboardRoutes.js";
+import frontendIssueRoutes from "./routes/frontend/issueRoutes.js";
 
 // Account Cancellation Route
 import accountCancellation from "./routes/accountCancellationRoutes.js";
@@ -136,9 +139,12 @@ app.use("/admin/states", stateRoutes);
 app.use("/admin/cities", cityRoutes);
 app.use("/admin/readers", readerRoutes);
 app.use("/admin/items", manageItemsRoutes);
+app.use("/admin/issue", issueRoutes);
 
 // Frontend Routes
 app.use("/frontend/items", itemsRoutes);
+app.use("/frontend/dashboard", frontendDashboardRoutes);
+app.use("/frontend/issue", frontendIssueRoutes);
 
 // Test Database Connection on Startup
 db.getConnection((err, connection) => {
