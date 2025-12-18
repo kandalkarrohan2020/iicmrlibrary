@@ -8,7 +8,7 @@ import {
   add,
   edit,
   status,
-  del
+  del,
 } from "../../controllers/admin/manageItemsController.js";
 
 const router = express.Router();
