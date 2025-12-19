@@ -52,7 +52,7 @@ const ManageItems = () => {
     const file = event.target.files[0];
     if (file && file.size <= 1 * 1024 * 1024) {
       setSelectedImage(file);
-      setNewItem((prev) => ({ ...prev, image: file }));
+      //setNewItem((prev) => ({ ...prev, image: file }));
     } else {
       alert("File size must be less than 1MB");
     }
@@ -172,7 +172,6 @@ const ManageItems = () => {
         available_copies: "",
         publication_year: "",
         shelf_location: "",
-        image: "",
       });
 
       fetchData();
@@ -522,8 +521,8 @@ const ManageItems = () => {
                   available_copies: "",
                   publication_year: "",
                   shelf_location: "",
-                  image: "",
                 });
+                setSelectedImage(null);
               }}
               className="w-6 h-6 cursor-pointer"
             />
@@ -814,7 +813,6 @@ const ManageItems = () => {
                     available_copies: "",
                     publication_year: "",
                     shelf_location: "",
-                    image: "",
                   });
                 }}
                 className="px-4 py-2 leading-4 text-[#ffffff] bg-[#000000B2] rounded active:scale-[0.98]"
