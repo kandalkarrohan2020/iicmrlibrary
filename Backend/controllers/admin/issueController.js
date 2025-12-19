@@ -4,6 +4,8 @@ import moment from "moment";
 export const getAll = (req, res) => {
   const sql = `
       SELECT issue.*,
+             issue.created_at AS issueCreatedAt,
+             issue.updated_at AS issueUpdatedAt,
              issue.status AS issueStatus,
              users.*,
              books.image,
@@ -25,8 +27,8 @@ export const getAll = (req, res) => {
     // Format Dates
     const formatted = result.map((row) => ({
       ...row,
-      created_at: moment(row.created_at).format("DD MMM YYYY | hh:mm A"),
-      updated_at: moment(row.updated_at).format("DD MMM YYYY | hh:mm A"),
+      issueCreatedAt: moment(row.issueCreatedAt).format("DD MMM YYYY | hh:mm A"),
+      issueUpdatedAt: moment(row.issueUpdatedAt).format("DD MMM YYYY | hh:mm A"),
     }));
 
     res.json(formatted);

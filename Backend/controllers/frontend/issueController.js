@@ -11,6 +11,8 @@ export const getAll = (req, res) => {
   const sql = `
       SELECT issue.*,
              issue.status AS issueStatus,
+             issue.created_at AS issueCreatedAt,
+             issue.updated_at AS issueUpdatedAt,
              users.*,
              books.image,
              books.title
@@ -28,11 +30,14 @@ export const getAll = (req, res) => {
       return res.status(500).json({ message: "Database error", error: err });
     }
 
-    // Format Dates
     const formatted = result.map((row) => ({
       ...row,
-      created_at: moment(row.created_at).format("DD MMM YYYY | hh:mm A"),
-      updated_at: moment(row.updated_at).format("DD MMM YYYY | hh:mm A"),
+      issueCreatedAt: moment(row.issueCreatedAt).format(
+        "DD MMM YYYY | hh:mm A"
+      ),
+      issueUpdatedAt: moment(row.issueUpdatedAt).format(
+        "DD MMM YYYY | hh:mm A"
+      ),
     }));
 
     res.json(formatted);
