@@ -56,7 +56,7 @@ router.put(
   edit
 );
 router.put("/status/:id", status);
-router.put("/update/paymentid/:id", payFinePayment);
+router.put("/update/fine/payment/:id", payFinePayment);
 router.get("/followup/list/:id", fetchFollowUpList);
 router.post("/followup/add/:id", addFollowUp);
 router.put("/assign/tasks/:id", assignTask);

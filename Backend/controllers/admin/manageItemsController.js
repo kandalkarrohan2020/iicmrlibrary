@@ -60,6 +60,7 @@ export const add = (req, res) => {
 
   const {
     title,
+    price,
     description,
     author_name,
     publisher,
@@ -73,7 +74,6 @@ export const add = (req, res) => {
     shelf_location,
   } = req.body;
 
-  // Validation
   if (!title || !description || !category || !isbn || !total_copies) {
     return res.status(400).json({
       message:
@@ -81,49 +81,31 @@ export const add = (req, res) => {
     });
   }
 
-  //  Convert to numbers safely
   const totalCopies = parseInt(total_copies, 10);
-  const availableCopies =
-    available_copies !== undefined && available_copies !== ""
-      ? parseInt(available_copies, 10)
-      : totalCopies;
+  const availableCopies = available_copies
+    ? parseInt(available_copies, 10)
+    : totalCopies;
 
   if (isNaN(totalCopies) || totalCopies <= 0) {
-    return res.status(400).json({
-      message: "Total copies must be a valid number",
-    });
+    return res.status(400).json({ message: "Invalid total copies" });
   }
 
-  // Image handling
-  const itemImageFile = req.files?.["image"]?.[0];
-  const itemImageUrl = itemImageFile
-    ? `/uploads/${itemImageFile.filename}`
-    : null;
+  // Single image
+  const itemImageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
   const sql = `
     INSERT INTO books (
-      title,
-      description,
-      author_name,
-      publisher,
-      category,
-      isbn,
-      edition,
-      language,
-      total_copies,
-      available_copies,
-      publication_year,
-      shelf_location,
-      image,
-      created_at,
-      updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      title, price, description, author_name, publisher, category,
+      isbn, edition, language, total_copies, available_copies,
+      publication_year, shelf_location, image, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   db.query(
     sql,
     [
       title,
+      price,
       description,
       author_name || null,
       publisher || null,
@@ -141,16 +123,12 @@ export const add = (req, res) => {
     ],
     (err, result) => {
       if (err) {
-        console.error("Error inserting item:", err);
-        return res.status(500).json({
-          message: "Database error while adding item",
-          error: err,
-        });
+        console.error(err);
+        return res.status(500).json({ message: "Database error" });
       }
 
-      return res.status(201).json({
+      res.status(201).json({
         message: "Item added successfully",
-        itemId: result.insertId,
       });
     }
   );
@@ -159,15 +137,13 @@ export const add = (req, res) => {
 // **Edit Item (Book)**
 export const edit = (req, res) => {
   const itemId = req.params.id;
-
-  if (!itemId) {
-    return res.status(400).json({ message: "Invalid Item ID" });
-  }
+  if (!itemId) return res.status(400).json({ message: "Invalid Item ID" });
 
   const currentdate = moment().format("YYYY-MM-DD HH:mm:ss");
 
   const {
     title,
+    price,
     description,
     author_name,
     publisher,
@@ -181,57 +157,35 @@ export const edit = (req, res) => {
     shelf_location,
   } = req.body;
 
-  // Validation
   if (!title || !description || !category || !isbn || !total_copies) {
-    return res.status(400).json({
-      message:
-        "Title, Description, Category, ISBN and Total Copies are required",
-    });
+    return res.status(400).json({ message: "Required fields missing" });
   }
 
   const totalCopies = parseInt(total_copies, 10);
-  const availableCopies =
-    available_copies !== undefined && available_copies !== ""
-      ? parseInt(available_copies, 10)
-      : totalCopies;
-
-  if (isNaN(totalCopies) || totalCopies <= 0) {
-    return res.status(400).json({
-      message: "Total copies must be a valid positive number",
-    });
-  }
+  const availableCopies = available_copies
+    ? parseInt(available_copies, 10)
+    : totalCopies;
 
   if (availableCopies > totalCopies) {
     return res.status(400).json({
-      message: "Available copies cannot be greater than total copies",
+      message: "Available copies cannot exceed total copies",
     });
   }
 
-  // Image handling
-  const itemImageFile = req.files?.["image"]?.[0];
-  const itemImageUrl = itemImageFile
-    ? `/uploads/${itemImageFile.filename}`
-    : null;
+  // Single image
+  const itemImageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
-  let updateSql = `
+  let sql = `
     UPDATE books SET
-      title = ?,
-      description = ?,
-      author_name = ?,
-      publisher = ?,
-      category = ?,
-      isbn = ?,
-      edition = ?,
-      language = ?,
-      total_copies = ?,
-      available_copies = ?,
-      publication_year = ?,
-      shelf_location = ?,
-      updated_at = ?
+      title = ?, price = ?, description = ?, author_name = ?, publisher = ?,
+      category = ?, isbn = ?, edition = ?, language = ?,
+      total_copies = ?, available_copies = ?,
+      publication_year = ?, shelf_location = ?, updated_at = ?
   `;
 
-  const updateValues = [
+  const values = [
     title,
+    price,
     description,
     author_name || null,
     publisher || null,
@@ -247,29 +201,20 @@ export const edit = (req, res) => {
   ];
 
   if (itemImageUrl) {
-    updateSql += `, image = ?`;
-    updateValues.push(itemImageUrl);
+    sql += `, image = ?`;
+    values.push(itemImageUrl);
   }
 
-  updateSql += ` WHERE itemId = ?`;
-  updateValues.push(itemId);
+  sql += ` WHERE itemId = ?`;
+  values.push(itemId);
 
-  db.query(updateSql, updateValues, (err, result) => {
+  db.query(sql, values, (err, result) => {
     if (err) {
-      console.error("Error updating item:", err);
-      return res.status(500).json({
-        message: "Database error during update",
-        error: err,
-      });
+      console.error(err);
+      return res.status(500).json({ message: "Update failed" });
     }
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Item not found" });
-    }
-
-    return res.status(200).json({
-      message: "Item updated successfully",
-    });
+    res.status(200).json({ message: "Item updated successfully" });
   });
 };
 

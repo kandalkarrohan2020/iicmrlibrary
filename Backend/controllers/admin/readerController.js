@@ -372,7 +372,7 @@ export const payFinePayment = (req, res) => {
     }
 
     db.query(
-      "UPDATE users SET paymentstatus = ?, fine = ?, WHERE id = ?",
+      "UPDATE users SET paymentstatus = ?, fine = ? WHERE id = ?",
       ["Paid", 0, Id],
       (err, result) => {
         if (err) {

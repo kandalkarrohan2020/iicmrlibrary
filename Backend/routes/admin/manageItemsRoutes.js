@@ -25,7 +25,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 1 * 1024 * 1024 }, // 1MB limit
+  limits: { fileSize: 1 * 1024 * 1024 }, // Limit file size (1MB)
   fileFilter: (req, file, cb) => {
     const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
     if (!allowedTypes.includes(file.mimetype)) {
@@ -40,9 +40,9 @@ router.get("/", getAll);
 router.get("/active", getAllActive);
 router.get("/:id", getById);
 
-router.post("/add", upload.fields([{ name: "image", maxCount: 1 }]), add);
+router.post("/add", upload.single("image"), add);
 
-router.put("/edit/:id", upload.fields([{ name: "image", maxCount: 1 }]), edit);
+router.put("/edit/:id", upload.single("image"), edit);
 
 router.put("/status/:id", status);
 router.delete("/delete/:id", del);
