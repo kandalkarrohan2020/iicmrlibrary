@@ -321,7 +321,7 @@ function Dashboard() {
       minWidth: "120px",
     },
 
-    { name: "Date & Time", selector: (row) => row.created_at, width: "200px" },
+    { name: "Date & Time", selector: (row) => row.issueCreatedAt, width: "200px" },
 
     {
       name: "Full Name",
